@@ -6,32 +6,24 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Set up DB -- look at those models
-var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/airport");
-var Schema = mongoose.Schema;
-var CargoSchema = new Schema({
-    title: String,
-    description: String
-});
-var Cargo = mongoose.model('Cargo', CargoSchema);
+
+//Lets pull in the routes, wcich require mongoose and the mongo db
+// pull in the router
+
 
 //Set up EJS -- look at those views
-app.set('views', __dirname);
+app.set('views', __dirname+ "/views"); //
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
-//Cargo form
-app.get('/cargo/new', function(req, res) { //look at that controller
-	res.render('cargoNew'); 
-});
 
-//Add new cargo
-app.post('/cargo', function(req, res) { //and look at that controller
-	Cargo.create({description: req.body.description, title: req.body.title}, function(error, cargo) {
-		res.render('cargoShow', {cargo: cargo});
-	});
-});
+// Get those routes from their directory 
+var routes = require(__dirname + '/config/routes');
+
+//use all of our Routes for everything
+
+app.use('/', routes);
+
 
 //Start server
 app.listen(3000, function() {
